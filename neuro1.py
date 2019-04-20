@@ -10,40 +10,46 @@ def activation2(net):                           #ФА №2
     if ((1 + net/(1+abs(net)))/2 >=0.5): return 1
     else: return 0
 
-def iteration(realOutput,inputs):               #предъявление на вход и проверка
+def iteration(realOutput,inputs,ed):               #предъявление на вход и проверка
     net = np.dot(weights,inputs)
     if (activationNum == "1"):
         output = activation1(net)
     else:
         output = activation2(net)
-    print(output, end = "  ")
+    if (ed==0):
+        print(output, end = ", ")
     delta = realOutput - output
     if (delta==0):
         mistake = 0
     else:
         mistake = 1
-    for i in range(5):
-        if (activationNum == "1"):
-            weights[i] += norma*delta*inputs[i]
-        else:
-            weights[i] += norma*delta*inputs[i]/((1+abs(net)*(1+abs(net))))
+    if (ed==1):
+        for i in range(5):
+            if (activationNum == "1"):
+                weights[i] += norma*delta*inputs[i]
+            else:
+                weights[i] += norma*delta*inputs[i]/((1+abs(net)*(1+abs(net))))
     return mistake
 
 def period():                                   #эпоха обучения, считает ошибки
-    num = 0
     count = 0
     print("\nResult:  ", end = "")
     if (learn == "all"):
         for i in range(16):
-            count += iteration(answer[num],inputs[i])
-            num+=1
+            count += iteration(answer[i],inputs[i],0)
+        for j in range(16):
+            iteration(answer[j],inputs[j],1)
     else:
         if (activationNum == "1"):
             for i in (3,7,11,12):
-                count += iteration(answer[i],inputs[i])
+                count += iteration(answer[i],inputs[i],0)
+            for i in (3,7,11,12):
+                iteration(answer[i],inputs[i],1)
         else:
             for i in (3,12,15):
-                count += iteration(answer[i],inputs[i])
+                count += iteration(answer[i],inputs[i],0)
+            for i in (3,12,15):
+                iteration(answer[i],inputs[i],1)
     print("\nE =", count)
     return count
 
